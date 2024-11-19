@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Introduction to OutSeekR</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to OutSeekR</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(OutSeekR);</span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The <strong>OutSeekR</strong> package implements a statistical
+approach to detecting outliers in RNA-seq and related data.</p>
+</div>
+<div id="methodology" class="section level1">
+<h1>Methodology</h1>
+<p>An analysis using <strong>OutSeekR</strong> should start with a
+matrix or data frame of normalized RNA-seq data, e.g., fragments per
+kilobase of transcript per million fragments mapped (FPKM), or similar
+data; in the case of RNA-seq data, we require normalized values rather
+than the counts themselves because the statistics we calculate assume
+continuous data. For simplicity, we’ll refer to the rows of the input
+data set as ‘transcripts’ and the columns of the input data set as
+‘samples’. Transcript identifiers should be stored as the row names of
+the matrix or data frame, and sample identifiers should be stored as the
+column names.</p>
+<p>The statistical approach of <strong>OutSeekR</strong> centers around
+the use of five statistics calculated for each transcript in the
+observed data:</p>
+<ol style="list-style-type: decimal">
+<li>the range of standard scores (z-scores) computed using the mean and
+standard deviation;</li>
+<li>the range of z-scores computed using the median and median absolute
+deviation (MAD);</li>
+<li>the range of z-scores computed using the 5%-trimmed mean and
+5%-trimmed standard deviation;</li>
+<li>the fraction of observations assigned to the smaller cluster based
+on K-means clustering with K = 2 clusters; and</li>
+<li>the cosine similarity between the most extreme observed value and
+the largest quantile of a representative theoretical distribution (see
+<a href="#simulating-null-data">Simulating null data</a>).</li>
+</ol>
+<p>Specifically, it uses the five statistics calculated on the observed
+data and compares the distributions of these statistics with
+counterparts calculated using simulated null data. Observed data
+yielding statistics more extreme than those of the null data suggest the
+presence of outliers.</p>
+<p>Note: Input data with low variation (e.g., where 50% or more of the
+values are identical) may cause issues in calculating the MAD or
+performing K-means clustering. It is recommended to exclude such data
+from the analysis to ensure reliable results. <strong>OutSeekR</strong>
+first identifies which transcripts/features contain outlier values. For
+a given transcript, the null hypothesis is there are no outlier values
+(<em>i.e.</em> all values come from some unknown population
+distribution) while the alternative hypothesis is that the transcript
+contains 1 or more outlier values from another distribution. A small
+p-value or FDR-value gives evidence for the presence of 1 or more
+outliers.</p>
+<p>After determining which transcripts contain outliers, an iterative
+procedure is used to identify the exact number of outliers each
+transcript has. ## Overview</p>
+<p>As an overview, the <strong>OutSeekR</strong> algorithm does the
+following:</p>
+<ul>
+<li>Simulates null data designed to share the characteristics of the
+observed data but without outlying values.</li>
+<li>Calculates the five statistics on each transcript in the observed
+data and each simulated transcript in the null data.</li>
+<li>For each transcript:
+<ul>
+<li>Combines the five statistics for the observed transcript with the
+five statistics from the null data.</li>
+<li>Ranks each of the five vectors of statistics individually.</li>
+<li>Computes the rank product for the observed transcript and each null
+transcript, defined as <span class="math display">\[\sqrt[k]{\prod_{i=1}^k Rank_i},\]</span> where
+<span class="math inline">\(k\)</span> is the number of nonmissing ranks
+across the five statistics.</li>
+<li>Computes a p-value as the proportion of rank products among the null
+transcripts greater than the rank product for the observed transcript.
+This p-value corresponds to the outlier test for the sample with the
+<strong>most extreme value</strong> in the observed transcript. If the
+p-value indicates this sample is an outlier, we exclude this sample,
+recalculate the outlier statistics in the remaining samples, combine
+these recalculated statistics with those computed from the null
+transcripts, recompute the rank product, and compute the new p-value. We
+continue in this fashion until we find a nonsignificant p-value (or,
+more precisely, a p-value greater than a user-specified threshold); each
+subsequent sample will be less outlying than the current one, so no more
+outliers are present, and we continue with the next transcript.</li>
+</ul></li>
+<li>Combines results across transcripts and performs p-value adjustment
+using the false discovery rate (FDR).</li>
+</ul>
+<div id="simulating-null-data" class="section level2">
+<h2>Simulating null data</h2>
+<p>We hypothesize that the underlying data can be represented by one of
+four theoretical distributions: the normal, log-normal, exponential, or
+gamma distributions. For each transcript, we fit a generalized additive
+model for location, scale, and shape (GAMLSS) to the observed data based
+on each distribution using <code>gamlss()</code> from the <a href="https://www.gamlss.com/"><strong>gamlss</strong></a> package; the
+model with the smallest Bayesian Information Criterion corresponds to
+the optimal theoretical distribution for the transcript. To account for
+additional variability, we also calculate ‘residuals’ for each
+transcript as the differences between the empirical quantiles of the
+observed data and the quantiles of the optimal theoretical distribution.
+Using the same GAMLSS-based method, we identify the optimal distribution
+of these residuals from among the normal, log-normal, exponential, or
+gamma. (Note that the optimal distributions of a transcript and its
+residuals need not be the same.)</p>
+<p>With the optimal distribution of each observed transcript and its
+residuals, we can create the simulated data. We iterate a user-specified
+number of times—1000 by default. At each step, we randomly select a
+transcript from the observed data and generate as many values as there
+are samples in the observed data according to its optimal distribution.
+We then add noise based on the optimal distribution of its residuals.
+The final null transcript is the sum of the simulated values and the
+simulated residuals. The final data set of simulated transcripts will
+contain as many rows as transcripts selected and the same number of
+columns as the observed data. While 1000 iterations are sufficient for
+exploratory analysis, we recommend using at least 10,000 iterations for
+publication-level results, with 100,000 or even one million iterations
+providing more robust estimates.</p>
+<p>The null data do not contain outliers by construction but are still
+in some sense representative of the observed data. By calculating the
+five outlier statistics on these transcripts, we can get a sense of
+their distributions in data similar to that observed but without
+outliers; this logic forms the basis for the p-value of the outlier
+test.</p>
+</div>
+<div id="parallelization-in-outseekr" class="section level2">
+<h2>Parallelization in <strong>OutSeekR</strong></h2>
+<p>The statistical approach to outlier detection implemented by
+<strong>OutSeekR</strong> is time-consuming. To reduce runtime, the code
+in <strong>OutSeekR</strong> has been written to allow parallelization.
+Parallelization is supported through the use of the package <a href="https://future.apply.futureverse.org/"><strong>future.apply</strong></a>.
+<strong>future.apply</strong> is built on top of the future framework
+implemented by the <a href="https://future.futureverse.org/"><strong>future</strong></a>
+package, which provides a uniform way to parallelize code independent of
+operating system or computing environment. In particular,
+<strong>OutSeekR</strong> uses the <code>future_*apply()</code>
+functions defined in <strong>future.apply</strong> rather than their
+base R equivalents in order to take advantage of a parallelization
+strategy set with <code>future::plan()</code> by the user.</p>
+<p><strong>Note:</strong> Depending on the size of the input data set
+and the number of null transcripts requested, the objects created by
+<strong>OutSeekR</strong> may exceed a limit defined in
+<strong>future</strong> to prevent exporting very large objects, which
+will trigger an error with a message referring to
+<code>future.globals.maxSize</code>. This can be avoided by setting
+<code>future.globals.maxSize</code> to a large value, e.g.,
+<code>options(future.globals.maxSize = 8000 * 1024^2);  # = 8 GB</code>.
+See <a href="https://search.r-project.org/CRAN/refmans/future/html/future.options.html">the
+documentation of <code>future.options</code></a> for further
+details.</p>
+</div>
+<div id="output" class="section level2">
+<h2>Output</h2>
+<p>The output of the main function in <strong>OutSeekR</strong>,
+<code>detect.outliers()</code>, is a named list with the following
+components:</p>
+<ul>
+<li><code>p.values</code>: a matrix of unadjusted p-values for the
+outlier test run on each transcript in the observed data.</li>
+<li><code>fdr</code>: a matrix of FDR-adjusted p-values for the outlier
+test run on each transcript in the observed data.</li>
+<li><code>num.outliers</code>: a vector giving the number of outliers
+detected for each transcript based on the threshold.</li>
+<li><code>outlier.test.results.list</code>: a list of length
+<code>max(num.outliers) + 1</code> containing entries
+<code>roundN</code>, where <code>N</code> is between one and
+<code>max(num.outliers) + 1</code>. <code>roundN</code> is the data
+frame of results for the outlier test after excluding the <span class="math inline">\((N-1)\)</span>th outlier sample, with
+<code>round1</code> being for the original data set (i.e., before
+excluding any outlier samples).</li>
+<li><code>distributions</code>: a numeric vector indicating the optimal
+distribution for each transcript. Possible values are 1 (normal), 2
+(log-normal), 3 (exponential), and 4 (gamma).</li>
+<li><code>initial.screen.method</code>: Specifies the statistical
+criterion for initial feature selection. Valid options are ‘p-value’ and
+‘FDR’.</li>
+</ul>
+</div>
+</div>
+<div id="example" class="section level1">
+<h1>Example</h1>
+<p><strong>OutSeekR</strong> includes a sample data set called
+<code>outliers</code> that we shall use as an example. It is a data
+frame consisting of 50 samples across 500 transcripts. Note that
+transcript identifiers and sample identifiers are stored as
+<code>rownames(outliers)</code> and <code>colnames(outliers)</code>,
+respectively.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">str</span>(outliers, <span class="at">list.len =</span> <span class="dv">5</span>);</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    500 obs. of  50 variables:</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;  $ S01: num  4.6646 35.139 0.0812 0.9259 16.4565 ...</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;  $ S02: num  1.47 63.417 0.183 0.544 9.184 ...</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;  $ S03: num  3.462 20.87 0.134 0.279 14.733 ...</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;  $ S04: num  7.449 46.638 0.19 0.321 29.328 ...</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt;  $ S05: num  4.291 38.908 0.222 0.353 10.323 ...</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt;   [list output truncated]</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>outliers[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>];</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;              S01        S02        S03        S04        S05         S06</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; T001  4.66463723  1.4702647  3.4622036  7.4494185  4.2913230  8.54235165</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; T002 35.13897201 63.4171763 20.8701361 46.6381322 38.9079440 50.53700051</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; T003  0.08116747  0.1826319  0.1336325  0.1898557  0.2218006  0.09160284</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; T004  0.92586980  0.5443416  0.2793449  0.3205108  0.3527784  0.65188688</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; T005 16.45653195  9.1838392 14.7325212 29.3281331 10.3232860 10.45796777</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; T006  0.27666833  0.1454688  0.2383844  0.1947163  0.2205053  0.12940149</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>outliers[<span class="dv">495</span><span class="sc">:</span><span class="dv">500</span>, <span class="dv">45</span><span class="sc">:</span><span class="dv">50</span>];</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt;            S45        S46       S47        S48        S49        S50</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; T495  1.667967  3.7989164 0.1898684 17.0515778  3.7819927  3.9090922</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; T496  2.764833  1.8242303 4.0182156  2.0022561  1.9854549  1.4610770</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; T497 12.514745 10.6874267 8.0599890 11.1270759 20.6848658 77.9629874</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; T498  3.120374  2.7675979 4.5075638  1.9106114  4.7501422  4.1928879</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; T499  1.381350  0.8598758 1.3305967  1.0744033  0.9516043  0.7567473</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; T500  1.019789  0.9378017 0.8989976  0.3950489  0.6994834  3.2713429</span></span></code></pre></div>
+<p>An analysis in <strong>OutSeekR</strong> is run using the function
+<code>detect.outliers()</code>. With default settings, it can be run by
+simply passing the input data set via the <code>data</code> parameter.
+Other parameters include the following:</p>
+<ul>
+<li><code>num.null</code>: the number of transcripts to generate when
+simulating from null distributions; default is 1000.</li>
+<li><code>initial.screen.method</code>: the statistical criterion for
+initial gene selection.</li>
+<li><code>p.value.threshold</code>: the p-value threshold for the
+outlier test; default is 0.05.</li>
+<li><code>fdr.threshold</code>: the false discovery rate (FDR)-adjusted
+p-value threshold for determining the final count of outliers; default
+is 0.01.</li>
+<li><code>kmeans.nstart</code>: the number of random starts when
+computing k-means fraction; default is 1. See
+<code>?stats::kmeans</code> for further details.</li>
+</ul>
+<p>In our first example, we pass the <code>outliers</code> data frame
+and use the defaults for most other parameters. To keep runtime
+manageable, we limit the number of null transcripts generated to 1,000.
+Prior to running <code>detect.outliers()</code>, we set up parallel
+processing. See <a href="#parallelization-in-outseekr">Parallelization
+in <strong>OutSeekR</strong></a> for further details.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Set random seed for reproducibility.</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">371892</span>);</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># Set up parallel processing.</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>multisession);</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>outlier.test.run<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">detect.outliers</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">data =</span> outliers,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    <span class="at">num.null =</span> <span class="fl">1e3</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    );</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">str</span>(outlier.test.run<span class="fl">.1</span>, <span class="at">max.level =</span> <span class="dv">2</span>);</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; List of 6</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;  $ p.values                 : num [1:500, 1:3] 0.000999 0.214785 0.227772 0.000999 0.411588 ...</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt;  $ fdr                      : num [1:500, 1:3] 0.00393 0.35211 0.36856 0.00393 0.5562 ...</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt;  $ num.outliers             : Named int [1:500] 1 0 0 1 0 0 0 0 2 1 ...</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:500] &quot;T001&quot; &quot;T002&quot; &quot;T003&quot; &quot;T004&quot; ...</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;  $ outlier.test.results.list:List of 3</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;   ..$ round1:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt;   ..$ round2:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt;   ..$ round3:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt;  $ distributions            : Named int [1:500] 2 2 4 2 2 2 1 1 3 2 ...</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:500] &quot;T001&quot; &quot;T002&quot; &quot;T003&quot; &quot;T004&quot; ...</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt;  $ initial.screen.method    : chr &quot;fdr&quot;</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co"># Restore sequential processing.</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>sequential);</span></code></pre></div>
+<p>Unadjusted p-values for the outlier test on each transcript are
+contained in the <code>p.values</code> entry of the object returned by
+<code>detect.outliers()</code>; FDR-adjusted p-values are contained in
+the <code>fdr</code> entry.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>p.values);</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt;           round1      round2      round3</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; T001 0.000999001 0.337662338 0.543456543</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; T002 0.214785215 0.381618382 0.392607393</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; T003 0.227772228 0.435564436 0.980019980</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; T004 0.000999001 0.004995005 0.003996004</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; T005 0.411588412 0.771228771 0.848151848</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; T006 0.016983017 0.453546454 0.438561439</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>fdr);</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;           round1     round2     round3</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; T001 0.003933075 0.85735160 0.99699899</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; T002 0.352106909 0.90004335 0.99699899</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; T003 0.368563475 0.93496247 0.99699899</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; T004 0.003933075 0.02744508 0.07684623</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; T005 0.556200556 0.98849748 0.99699899</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; T006 0.035529324 0.93860388 0.99699899</span></span></code></pre></div>
+<p>As explained in [Overview], an iterative procedure is used to
+determine the exact number of outliers per transcript. The iterations
+stop after the p-value or FDR-value exceeds the specified threshold.</p>
+<p>The entries <code>num.outliers</code> give transcript-specific counts
+of the number of outliers based on the threshold of specified
+<code>initial.screen.method</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>num.outliers);</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; T001 T002 T003 T004 T005 T006 </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;    1    0    0    1    0    0</span></span></code></pre></div>
+<p>We can get a quick view of the distribution of the number of outliers
+across transcripts using <code>table()</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">table</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>num.outliers);</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt;   0   1   2 </span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; 324 126  50</span></span></code></pre></div>
+<p>More granular results can be found in the
+<code>outlier.test.results.list</code> entry of the object returned by
+<code>detect.outliers()</code>. It is a named list of data frames, where
+each reflects the results of a different ‘round’ of outlier testing; by
+‘round’, we mean the process of excluding the most outlying sample (for
+all rounds except the first), calculating the five outlier statistics,
+ranking them alongside the statistics of the null data, computing the
+rank product, and computing the unadjusted p-value. Each data frame in
+<code>outlier.test.results.list</code> contains the transcript and
+sample identifiers, the five statistics calculated on the observed
+transcript, the rank product, and the unadjusted and FDR-adjusted
+p-value for the outlier test.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">str</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>outlier.test.results.list);</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; List of 3</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;  $ round1:&#39;data.frame&#39;:  500 obs. of  9 variables:</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt;   ..$ sample           : chr [1:500] &quot;S11&quot; &quot;S46&quot; &quot;S43&quot; &quot;S10&quot; ...</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.mean      : num [1:500] 7.1 4.61 5.03 6.31 4.8 ...</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.median    : num [1:500] 27.5 5.99 5.87 31.95 5.21 ...</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.trimmean  : num [1:500] 25.15 5.94 6.74 17.87 6.1 ...</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;   ..$ fraction.kmeans  : num [1:500] 0.02 0.12 0.36 0.06 0.38 0.2 0.46 0.46 0.04 0.04 ...</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;   ..$ cosine.similarity: num [1:500] 0.894 0.998 0.994 0.904 0.999 ...</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;   ..$ rank.product     : num [1:500] 2 237.99 250.1 3.46 420.32 ...</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;   ..$ p.value          : num [1:500] 0.000999 0.214785 0.227772 0.000999 0.411588 ...</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt;   ..$ fdr              : num [1:500] 0.00393 0.35211 0.36856 0.00393 0.5562 ...</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt;  $ round2:&#39;data.frame&#39;:  500 obs. of  9 variables:</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt;   ..$ sample           : chr [1:500] &quot;S31&quot; &quot;S33&quot; &quot;S18&quot; &quot;S11&quot; ...</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.mean      : num [1:500] 4.58 4.65 4.95 5.88 4.41 ...</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.median    : num [1:500] 5.7 5.67 4.83 15.72 4.78 ...</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.trimmean  : num [1:500] 5.66 6.13 6.16 22.33 5.3 ...</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt;   ..$ fraction.kmeans  : num [1:500] 0.1429 0.449 0.4082 0.0408 0.4082 ...</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;   ..$ cosine.similarity: num [1:500] 1 0.997 0.999 0.868 1 ...</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt;   ..$ rank.product     : num [1:500] 348.04 389.84 440.63 5.92 699.47 ...</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt;   ..$ p.value          : num [1:500] 0.338 0.382 0.436 0.005 0.771 ...</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt;   ..$ fdr              : num [1:500] 0.8574 0.9 0.935 0.0274 0.9885 ...</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt;  $ round3:&#39;data.frame&#39;:  500 obs. of  9 variables:</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt;   ..$ sample           : chr [1:500] &quot;S12&quot; &quot;S16&quot; &quot;S11&quot; &quot;S24&quot; ...</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.mean      : num [1:500] 3.89 4.88 4.16 6.96 4.13 ...</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.median    : num [1:500] 4.18 5.42 3.79 12.32 4.12 ...</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt;   ..$ zrange.trimmean  : num [1:500] 4.57 6.29 4.93 17.89 4.82 ...</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt;   ..$ fraction.kmeans  : num [1:500] 0.1875 0.4583 0.5 0.0208 0.4583 ...</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt;   ..$ cosine.similarity: num [1:500] 0.999 0.998 1 0.942 0.999 ...</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt;   ..$ rank.product     : num [1:500] 535.18 400.45 855.99 4.93 755.54 ...</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt;   ..$ p.value          : num [1:500] 0.543 0.393 0.98 0.004 0.848 ...</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt;   ..$ fdr              : num [1:500] 0.997 0.997 0.997 0.0768 0.997 ...</span></span></code></pre></div>
+<p>It may be of use to combine the results across all rounds of outlier
+testing into a single data frame. One way to do this (while retaining
+the round information) using <code>lapply()</code> and
+<code>rbind()</code> is shown below:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>outlier.test.results.combined <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    <span class="at">X =</span> <span class="fu">seq_along</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>outlier.test.results.list),</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>        df <span class="ot">&lt;-</span> outlier.test.run<span class="fl">.1</span><span class="sc">$</span>outlier.test.results.list[[i]];</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>        df<span class="sc">$</span>round <span class="ot">&lt;-</span> i;</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>        df <span class="ot">&lt;-</span> df[, <span class="fu">c</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>            <span class="st">&#39;round&#39;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>            <span class="fu">colnames</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>outlier.test.results.list[[i]])</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>            )];</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>        }</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>    );</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>outlier.test.results.combined <span class="ot">&lt;-</span> <span class="fu">do.call</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>    <span class="at">what =</span> <span class="st">&#39;rbind&#39;</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>    <span class="at">args =</span> outlier.test.results.combined</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    );</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co"># Combining the data frames produces duplicates in the row names.  R</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co"># will de-duplicate them, but as all the necessary information is</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co"># included in the columns of the data frame (specifically, &#39;round&#39; and</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co"># &#39;transcript&#39;), we&#39;ll simply discard the row names.</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="fu">rownames</span>(outlier.test.results.combined) <span class="ot">&lt;-</span> <span class="cn">NULL</span>;</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="fu">head</span>(outlier.test.results.combined);</span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt;   round sample zrange.mean zrange.median zrange.trimmean fraction.kmeans</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; 1     1    S11    7.095115     27.495396       25.151330            0.02</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; 2     1    S46    4.608063      5.987464        5.935080            0.12</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt; 3     1    S43    5.026914      5.867812        6.742630            0.36</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt; 4     1    S10    6.311975     31.952082       17.871927            0.06</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; 5     1    S37    4.797063      5.213030        6.098033            0.38</span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; 6     1    S22    6.538349     15.108789       12.427457            0.20</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt;   cosine.similarity rank.product     p.value         fdr</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a><span class="co">#&gt; 1         0.8943633     2.000000 0.000999001 0.003933075</span></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co">#&gt; 2         0.9976231   237.992328 0.214785215 0.352106909</span></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co">#&gt; 3         0.9940453   250.103114 0.227772228 0.368563475</span></span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a><span class="co">#&gt; 4         0.9042747     3.457366 0.000999001 0.003933075</span></span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="co">#&gt; 5         0.9987598   420.317069 0.411588412 0.556200556</span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="co">#&gt; 6         0.9687042    20.566080 0.016983017 0.035529324</span></span></code></pre></div>
+<p>We can observe the optimal theoretical distribution for each
+transcript and the frequencies across all transcripts.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>distributions);</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; T001 T002 T003 T004 T005 T006 </span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt;    2    2    4    2    2    2</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">table</span>(outlier.test.run<span class="fl">.1</span><span class="sc">$</span>distributions);</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;   1   2   3   4 </span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt;  54 251  11 184</span></span></code></pre></div>
+<p>The results are numeric codes, with 1 corresponding to the normal
+distribution, 2 the log-normal distribution, 3 the exponential
+distribution, and 4 the gamma distribution.</p>
+<p>Lastly, we show a second run of the algorithm where we adjust the
+p-value and FDR thresholds:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Set up parallel processing.</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>multisession);</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>outlier.test.run<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">detect.outliers</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="at">data =</span> outliers,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    <span class="at">num.null =</span> <span class="fl">1e3</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>    <span class="at">initial.screen.method =</span> <span class="st">&#39;fdr&#39;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>    <span class="at">p.value.threshold =</span> <span class="fl">0.25</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>    <span class="at">fdr.threshold =</span> <span class="fl">0.05</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>    );</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co"># Restore sequential processing.</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>sequential);</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="fu">str</span>(outlier.test.run<span class="fl">.2</span>, <span class="at">max.level =</span> <span class="dv">2</span>);</span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; List of 6</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt;  $ p.values                 : num [1:500, 1:4] 0.000999 0.208791 0.22977 0.000999 0.405594 ...</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt;  $ fdr                      : num [1:500, 1:4] 0.00252 0.34116 0.36941 0.00252 0.54758 ...</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt;  $ num.outliers             : Named int [1:500] 1 0 0 3 0 1 0 0 2 2 ...</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:500] &quot;T001&quot; &quot;T002&quot; &quot;T003&quot; &quot;T004&quot; ...</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co">#&gt;  $ outlier.test.results.list:List of 4</span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co">#&gt;   ..$ round1:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a><span class="co">#&gt;   ..$ round2:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="co">#&gt;   ..$ round3:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a><span class="co">#&gt;   ..$ round4:&#39;data.frame&#39;:   500 obs. of  9 variables:</span></span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a><span class="co">#&gt;  $ distributions            : Named int [1:500] 2 2 4 2 2 2 1 1 3 2 ...</span></span>
+<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:500] &quot;T001&quot; &quot;T002&quot; &quot;T003&quot; &quot;T004&quot; ...</span></span>
+<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a><span class="co">#&gt;  $ initial.screen.method    : chr &quot;fdr&quot;</span></span>
+<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a><span class="co"># Examine p-value and FDR matrices.</span></span>
+<span id="cb10-33"><a href="#cb10-33" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.2</span><span class="sc">$</span>p.values);</span>
+<span id="cb10-34"><a href="#cb10-34" tabindex="-1"></a><span class="co">#&gt;           round1      round2      round3    round4</span></span>
+<span id="cb10-35"><a href="#cb10-35" tabindex="-1"></a><span class="co">#&gt; T001 0.000999001 0.310689311 0.751248751 0.8211788</span></span>
+<span id="cb10-36"><a href="#cb10-36" tabindex="-1"></a><span class="co">#&gt; T002 0.208791209 0.264735265 0.290709291 0.6823177</span></span>
+<span id="cb10-37"><a href="#cb10-37" tabindex="-1"></a><span class="co">#&gt; T003 0.229770230 0.444555445 0.966033966 0.8791209</span></span>
+<span id="cb10-38"><a href="#cb10-38" tabindex="-1"></a><span class="co">#&gt; T004 0.000999001 0.001998002 0.000999001 0.6163836</span></span>
+<span id="cb10-39"><a href="#cb10-39" tabindex="-1"></a><span class="co">#&gt; T005 0.405594406 0.744255744 0.800199800 0.8951049</span></span>
+<span id="cb10-40"><a href="#cb10-40" tabindex="-1"></a><span class="co">#&gt; T006 0.007992008 0.428571429 0.427572428 0.4995005</span></span>
+<span id="cb10-41"><a href="#cb10-41" tabindex="-1"></a><span class="fu">head</span>(outlier.test.run<span class="fl">.2</span><span class="sc">$</span>fdr);</span>
+<span id="cb10-42"><a href="#cb10-42" tabindex="-1"></a><span class="co">#&gt;          round1      round2     round3    round4</span></span>
+<span id="cb10-43"><a href="#cb10-43" tabindex="-1"></a><span class="co">#&gt; T001 0.00252273 0.796233470 0.99089551 0.9849588</span></span>
+<span id="cb10-44"><a href="#cb10-44" tabindex="-1"></a><span class="co">#&gt; T002 0.34116211 0.731312886 0.99089551 0.9849588</span></span>
+<span id="cb10-45"><a href="#cb10-45" tabindex="-1"></a><span class="co">#&gt; T003 0.36940551 0.900674129 0.99089551 0.9849588</span></span>
+<span id="cb10-46"><a href="#cb10-46" tabindex="-1"></a><span class="co">#&gt; T004 0.00252273 0.008394966 0.01560939 0.9849588</span></span>
+<span id="cb10-47"><a href="#cb10-47" tabindex="-1"></a><span class="co">#&gt; T005 0.54758076 0.965355888 0.99089551 0.9849588</span></span>
+<span id="cb10-48"><a href="#cb10-48" tabindex="-1"></a><span class="co">#&gt; T006 0.01658093 0.900674129 0.99089551 0.9849588</span></span>
+<span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a></span>
+<span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a><span class="co"># Check the distribution of number of outliers detected.</span></span>
+<span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a><span class="fu">table</span>(outlier.test.run<span class="fl">.2</span><span class="sc">$</span>num.outliers);</span>
+<span id="cb10-52"><a href="#cb10-52" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-53"><a href="#cb10-53" tabindex="-1"></a><span class="co">#&gt;   0   1   2   3 </span></span>
+<span id="cb10-54"><a href="#cb10-54" tabindex="-1"></a><span class="co">#&gt; 243 116 105  36</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
